@@ -1,0 +1,26 @@
+# Render Blueprint — deploy Spring reminder API on push.
+# Dashboard: New → Blueprint → connect repo, or add this file and push.
+# Docs: https://render.com/docs/blueprint-spec
+
+services:
+  - type: web
+    name: payment-reminder-api
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./server-spring/Dockerfile
+    dockerContext: ./server-spring
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASS
+        sync: false
+    buildFilter:
+      paths:
+        - server-spring/**

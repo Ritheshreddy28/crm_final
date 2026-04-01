@@ -25,7 +25,7 @@ public class ReminderController {
         this.reminderJobService = reminderJobService;
     }
 
-    @PostMapping("/api/send-reminders")
+    @PostMapping(ReminderApiPaths.SEND_REMINDERS)
     public ResponseEntity<?> sendReminders(
             @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody(required = false) Map<String, Object> body
@@ -58,7 +58,7 @@ public class ReminderController {
         }
     }
 
-    @PostMapping("/api/send-reminder-to-student")
+    @PostMapping(ReminderApiPaths.SEND_REMINDER_TO_STUDENT)
     public ResponseEntity<?> sendReminderToStudent(
             @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody(required = false) Map<String, Object> body

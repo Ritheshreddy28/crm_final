@@ -1,0 +1,56 @@
+================================================================================
+Spring Boot reminder backend — URLs & configuration reference
+================================================================================
+(This file documents the server-spring module. Open this project in Spring Tool
+Suite (STS) or any Java IDE: File → Import → Existing Maven Projects → select
+this server-spring folder.)
+
+--------------------------------------------------------------------------------
+1) Where this service listens
+--------------------------------------------------------------------------------
+Default port: 3001  (override with environment variable PORT)
+
+Local base URL (origin, no trailing slash):
+  http://localhost:3001
+
+Example deployed base URL (replace with your real host):
+  https://your-reminder-api.example.com
+
+--------------------------------------------------------------------------------
+2) REST endpoints (frontend: set VITE_REMINDER_API_URL = base URL above)
+--------------------------------------------------------------------------------
+POST {base}/api/send-reminders
+     Headers: Authorization: Bearer <Supabase access token>
+     Body (JSON): { "type": "all" | "students" | "future" }
+
+POST {base}/api/send-reminder-to-student
+     Headers: Authorization: Bearer <Supabase access token>
+     Body (JSON): { "student_id": "<uuid>" }
+
+Java path constants: com.reminder.web.ReminderApiPaths
+
+--------------------------------------------------------------------------------
+3) Environment variables (same names as application.properties / server .env)
+--------------------------------------------------------------------------------
+SUPABASE_URL                 Supabase project URL (https://xxx.supabase.co)
+SUPABASE_ANON_KEY            Validates JWT / admin role
+SUPABASE_SERVICE_ROLE_KEY    Server-side RPC and DB access
+GMAIL_USER                   SMTP user (e.g. Gmail address)
+GMAIL_APP_PASS               Gmail app password
+PORT                         HTTP port (default 3001)
+REMINDER_CRON                Optional Spring cron (default 09:00 daily)
+
+--------------------------------------------------------------------------------
+4) Stack (truthful summary for viva / demo)
+--------------------------------------------------------------------------------
+- Build: Apache Maven (pom.xml)
+- Framework: Spring Boot 3.x (Java 17+)
+- REST: Spring Web (@RestController)
+- HTTP client: WebClient (Supabase Auth / REST)
+- Mail: Spring Mail + SMTP (Gmail)
+- Scheduling: Spring @Scheduled (daily reminder job)
+
+Frontend is separate (React + TypeScript); it calls this service only for
+reminder emails. All other data uses Supabase from the browser.
+
+================================================================================

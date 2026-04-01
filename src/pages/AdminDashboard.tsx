@@ -52,6 +52,12 @@ async function getSignedScreenshotUrl(urlOrPath: string | null | undefined): Pro
 import { LogOut, Shield, Eye, X, Loader2, Calendar, DollarSign, User, Building, FileText, CreditCard, Hash, BarChart3, Clock, Trash2, GraduationCap, Mail, BookOpen, Plus, Lock, Search, Edit, FileSpreadsheet, Upload, Check, Download, AlertCircle, Users, Wallet, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, AlertTriangle, Timer, ImageIcon } from 'lucide-react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { formatCurrency } from '../lib/currency';
+import {
+  REMINDER_API_URLS,
+  isReminderApiConfigured,
+  isReminderFetchNetworkError,
+  reminderApiNetworkErrorHint,
+} from '../lib/backendConfig';
 import * as XLSX from 'xlsx';
 import ExcelJS from 'exceljs';
 
@@ -2478,13 +2484,12 @@ export function AdminDashboard() {
                               setReminderSending(false);
                               return;
                             }
-                            const base = import.meta.env.VITE_REMINDER_API_URL;
-                            if (!base?.trim()) {
-                              setReminderMessage('Reminder server not configured (VITE_REMINDER_API_URL)');
+                            if (!isReminderApiConfigured()) {
+                              setReminderMessage('Reminder server not configured (set VITE_REMINDER_API_URL)');
                               setReminderSending(false);
                               return;
                             }
-                            const res = await fetch(`${base.replace(/\/$/, '')}/api/send-reminders`, {
+                            const res = await fetch(REMINDER_API_URLS.sendReminders, {
                               method: 'POST',
                               headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
                               body: JSON.stringify({ type: 'all' }),
@@ -2497,10 +2502,7 @@ export function AdminDashboard() {
                             }
                           } catch (e) {
                             const msg = e instanceof Error ? e.message : 'Request failed';
-                            const isNetwork = msg === 'Failed to fetch' || (e instanceof TypeError && e.message?.includes('fetch'));
-                            setReminderMessage(isNetwork
-                              ? 'Reminder server unreachable. Start it: cd server && npm run dev'
-                              : msg);
+                            setReminderMessage(isReminderFetchNetworkError(e) ? reminderApiNetworkErrorHint() : msg);
                           } finally {
                             setReminderSending(false);
                           }
@@ -2538,13 +2540,12 @@ export function AdminDashboard() {
                                   setReminderSending(false);
                                   return;
                                 }
-                                const base = import.meta.env.VITE_REMINDER_API_URL;
-                                if (!base?.trim()) {
-                                  setReminderMessage('Reminder server not configured');
+                                if (!isReminderApiConfigured()) {
+                                  setReminderMessage('Reminder server not configured (set VITE_REMINDER_API_URL)');
                                   setReminderSending(false);
                                   return;
                                 }
-                                const res = await fetch(`${base.replace(/\/$/, '')}/api/send-reminders`, {
+                                const res = await fetch(REMINDER_API_URLS.sendReminders, {
                                   method: 'POST',
                                   headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
                                   body: JSON.stringify({ type: 'students' }),
@@ -2554,7 +2555,7 @@ export function AdminDashboard() {
                                 else setReminderMessage(`Students: Sent ${data.sent ?? 0}, Failed ${data.failed ?? 0}`);
                               } catch (e) {
                                 const msg = e instanceof Error ? e.message : 'Request failed';
-                                setReminderMessage(msg === 'Failed to fetch' ? 'Reminder server unreachable' : msg);
+                                setReminderMessage(isReminderFetchNetworkError(e) ? reminderApiNetworkErrorHint() : msg);
                               } finally {
                                 setReminderSending(false);
                               }
@@ -2576,13 +2577,12 @@ export function AdminDashboard() {
                                   setReminderSending(false);
                                   return;
                                 }
-                                const base = import.meta.env.VITE_REMINDER_API_URL;
-                                if (!base?.trim()) {
-                                  setReminderMessage('Reminder server not configured');
+                                if (!isReminderApiConfigured()) {
+                                  setReminderMessage('Reminder server not configured (set VITE_REMINDER_API_URL)');
                                   setReminderSending(false);
                                   return;
                                 }
-                                const res = await fetch(`${base.replace(/\/$/, '')}/api/send-reminders`, {
+                                const res = await fetch(REMINDER_API_URLS.sendReminders, {
                                   method: 'POST',
                                   headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
                                   body: JSON.stringify({ type: 'future' }),
@@ -2592,7 +2592,7 @@ export function AdminDashboard() {
                                 else setReminderMessage(`Future repayments: Sent ${data.sent ?? 0}, Failed ${data.failed ?? 0}`);
                               } catch (e) {
                                 const msg = e instanceof Error ? e.message : 'Request failed';
-                                setReminderMessage(msg === 'Failed to fetch' ? 'Reminder server unreachable' : msg);
+                                setReminderMessage(isReminderFetchNetworkError(e) ? reminderApiNetworkErrorHint() : msg);
                               } finally {
                                 setReminderSending(false);
                               }
@@ -2614,13 +2614,12 @@ export function AdminDashboard() {
                                   setReminderSending(false);
                                   return;
                                 }
-                                const base = import.meta.env.VITE_REMINDER_API_URL;
-                                if (!base?.trim()) {
-                                  setReminderMessage('Reminder server not configured');
+                                if (!isReminderApiConfigured()) {
+                                  setReminderMessage('Reminder server not configured (set VITE_REMINDER_API_URL)');
                                   setReminderSending(false);
                                   return;
                                 }
-                                const res = await fetch(`${base.replace(/\/$/, '')}/api/send-reminders`, {
+                                const res = await fetch(REMINDER_API_URLS.sendReminders, {
                                   method: 'POST',
                                   headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
                                   body: JSON.stringify({ type: 'all' }),
@@ -2630,7 +2629,7 @@ export function AdminDashboard() {
                                 else setReminderMessage(`All: Sent ${data.sent ?? 0}, Failed ${data.failed ?? 0}`);
                               } catch (e) {
                                 const msg = e instanceof Error ? e.message : 'Request failed';
-                                setReminderMessage(msg === 'Failed to fetch' ? 'Reminder server unreachable' : msg);
+                                setReminderMessage(isReminderFetchNetworkError(e) ? reminderApiNetworkErrorHint() : msg);
                               } finally {
                                 setReminderSending(false);
                               }
@@ -5249,13 +5248,12 @@ export function AdminDashboard() {
                         setStudentReminderSending(false);
                         return;
                       }
-                      const base = import.meta.env.VITE_REMINDER_API_URL;
-                      if (!base?.trim()) {
-                        setStudentReminderMessage('Reminder server not configured');
+                      if (!isReminderApiConfigured()) {
+                        setStudentReminderMessage('Reminder server not configured (set VITE_REMINDER_API_URL)');
                         setStudentReminderSending(false);
                         return;
                       }
-                      const res = await fetch(`${base.replace(/\/$/, '')}/api/send-reminder-to-student`, {
+                      const res = await fetch(REMINDER_API_URLS.sendReminderToStudent, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
                         body: JSON.stringify({ student_id: selectedStudentForPopup.id }),
@@ -5267,7 +5265,9 @@ export function AdminDashboard() {
                         setStudentReminderMessage('Reminder sent');
                       }
                     } catch (e) {
-                      setStudentReminderMessage(e instanceof Error ? e.message : 'Request failed');
+                      setStudentReminderMessage(
+                        isReminderFetchNetworkError(e) ? reminderApiNetworkErrorHint() : (e instanceof Error ? e.message : 'Request failed')
+                      );
                     } finally {
                       setStudentReminderSending(false);
                     }

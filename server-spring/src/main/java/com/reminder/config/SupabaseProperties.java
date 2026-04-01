@@ -2,6 +2,11 @@ package com.reminder.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * Supabase credentials for this Spring service (same env names as the Node {@code server/}
+ * and the same values as the React app uses for {@code VITE_SUPABASE_URL} /
+ * {@code VITE_SUPABASE_ANON_KEY}, plus the service role key which is server-only).
+ */
 @ConfigurationProperties(prefix = "supabase")
 public class SupabaseProperties {
 

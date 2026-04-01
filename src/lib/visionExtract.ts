@@ -1,8 +1,10 @@
+import { BACKEND_ENV, VISION_CHAT_URLS } from './backendConfig';
+
 /**
  * AI Vision extraction for payment screenshots.
  * Uses OpenAI-compatible vision API; falls back to OCR in caller if this fails.
+ * Backend URLs: see VISION_CHAT_URLS in ./backendConfig.ts
  */
-
 const VISION_PROMPT = `You are an AI system that extracts payment details from a mobile payment screenshot.
 Analyze the image and return ONLY valid JSON.
 Do not include explanations or extra text.
@@ -77,13 +79,13 @@ function parseJsonFromContent(content: string): VisionPaymentData | null {
  * Requires VITE_OPENAI_API_KEY to be set.
  */
 export async function extractPaymentDetailsFromVision(imageFile: File): Promise<VisionPaymentData | null> {
-  const apiKey = import.meta.env.VITE_OPENAI_API_KEY as string | undefined;
+  const apiKey = BACKEND_ENV.openAiApiKey;
   if (!apiKey || typeof apiKey !== 'string' || apiKey.length < 10) {
     return null;
   }
 
   const isOpenRouter = apiKey.startsWith('sk-or-v1-');
-  const url = isOpenRouter ? 'https://openrouter.ai/api/v1/chat/completions' : 'https://api.openai.com/v1/chat/completions';
+  const url = isOpenRouter ? VISION_CHAT_URLS.openRouter : VISION_CHAT_URLS.openai;
   const model = isOpenRouter ? 'openai/gpt-4o' : 'gpt-4o';
 
   return new Promise<VisionPaymentData | null>((resolve) => {
