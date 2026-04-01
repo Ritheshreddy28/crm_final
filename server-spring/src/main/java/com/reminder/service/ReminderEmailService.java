@@ -26,12 +26,24 @@ public class ReminderEmailService {
     @Value("${spring.mail.username:}")
     private String fromAddress;
 
+    @Value("${spring.mail.password:}")
+    private String fromPassword;
+
     public ReminderEmailService(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
     public boolean sendReminderEmail(String to, String name, List<DueItem> dueItems, ReminderEmailOptions options) {
-        if (fromAddress == null || fromAddress.isBlank() || to == null || to.isBlank()) {
+        if (to == null || to.isBlank()) {
+            log.warn("[reminder] sendMail skipped: recipient email missing");
+            return false;
+        }
+        if (fromAddress == null || fromAddress.isBlank()) {
+            log.warn("[reminder] sendMail skipped: SMTP username missing (set GMAIL_USER / spring.mail.username)");
+            return false;
+        }
+        if (fromPassword == null || fromPassword.isBlank()) {
+            log.warn("[reminder] sendMail skipped: SMTP password missing (set GMAIL_APP_PASS / spring.mail.password)");
             return false;
         }
 
