@@ -25,6 +25,11 @@ public class ReminderController {
         this.reminderJobService = reminderJobService;
     }
 
+    @GetMapping("/")
+    public ResponseEntity<?> health() {
+        return ResponseEntity.ok(Map.of("ok", true, "service", "payment-reminder-api"));
+    }
+
     @PostMapping(ReminderApiPaths.SEND_REMINDERS)
     public ResponseEntity<?> sendReminders(
             @RequestHeader(value = "Authorization", required = false) String authorization,
